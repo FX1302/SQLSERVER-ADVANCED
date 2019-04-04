@@ -1,0 +1,39 @@
+
+-- =============================================
+-- Author:		FERI
+-- Create date: 26 SEPTEMBER 2017
+-- Description:	EXECUTE TABLE CONTAIN LIST OF JOBS
+-- =============================================
+ALTER PROCEDURE [dbo].[SELECT_EXECUTE_JOBS] 
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	DECLARE @QUANTITY AS  INT
+	DECLARE @MAX AS INT
+    SET @QUANTITY   = 1
+	
+
+    CREATE TABLE #LIST_TBL(ID INT IDENTITY(1,1),JOB_NAME VARCHAR(50))
+	INSERT INTO #LIST_TBL
+    SELECT JOB_NAME FROM DBO.T_JOBS  WITH (NOLOCK) WHERE  [STATUS] = 1
+	 
+	SELECT @MAX = COUNT(*) FROM DBO.T_JOBS  WITH (NOLOCK)
+	DECLARE @JOB_NAME AS VARCHAR(50)
+
+	 WHILE @QUANTITY  <= @MAX 
+	 BEGIN 
+	     SELECT  @JOB_NAME = JOB_NAME FROM #LIST_TBL  WHERE ID =  @QUANTITY
+		 
+		 IF (@JOB_NAME IS NOT NULL AND @JOB_NAME  <> '')
+		 EXEC (@JOB_NAME)
+		 
+		 SET @QUANTITY  = @QUANTITY  + 1
+	 END
+	
+	 
+
+
+END
